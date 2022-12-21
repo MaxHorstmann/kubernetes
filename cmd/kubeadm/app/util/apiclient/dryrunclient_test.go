@@ -18,6 +18,7 @@ package apiclient
 
 import (
 	"bytes"
+	"os"
 	"testing"
 
 	"k8s.io/api/core/v1"
@@ -26,6 +27,18 @@ import (
 	"k8s.io/apimachinery/pkg/runtime/schema"
 	core "k8s.io/client-go/testing"
 )
+
+func TestDiscoveryServerVersion(t *testing.T) {
+	dryRunGetter := &InitDryRunGetter{
+		controlPlaneName: "controlPlane",
+		serviceSubnet:    "serviceSubnet",
+	}
+	c := NewDryRunClient(dryRunGetter, os.Stdout)
+	_, err := c.Discovery().ServerVersion()
+	if err != nil {
+		t.Fatalf("Get ServerVersion failed.: %v", err)
+	}
+}
 
 func TestLogDryRunAction(t *testing.T) {
 	var tests = []struct {
